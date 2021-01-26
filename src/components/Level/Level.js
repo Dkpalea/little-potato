@@ -30,6 +30,8 @@ import Recipe from '../Recipe/Recipe';
 
 class Level extends Component {
 
+  godMode = true;
+
   constructor(props) {
     super(props);
     this.state = {
@@ -234,8 +236,12 @@ class Level extends Component {
     const userAnswer3IsCorrect = parseInt(document.getElementById('user-answer-3-input').value) === this.state.q3Answer;
     this.setState({userAnswer1IsCorrect, userAnswer2IsCorrect, userAnswer3IsCorrect});
 
-    if (userAnswer1IsCorrect && userAnswer2IsCorrect && userAnswer3IsCorrect) {
+    if ((userAnswer1IsCorrect && userAnswer2IsCorrect && userAnswer3IsCorrect) || this.godMode) {
+      // clear input after correct answers submitted
       this.props.increaseLevelNumber();
+      document.getElementById('user-answer-1-input').value = '';
+      document.getElementById('user-answer-2-input').value = '';
+      document.getElementById('user-answer-3-input').value = '';
     }
   };
 
@@ -245,7 +251,6 @@ class Level extends Component {
         {/*<div className="level-background" style={{backgroundImage: `url(${this.recipes[this.props.levelNumber].backgroundImgPath})`}} />*/}
         <div className="level-inner">
           <div className="left-col">
-            <div>Level {this.props.levelNumber} of 5</div>
             <Recipe
               levelNumber={this.props.levelNumber}
               randNum1={this.state.randNum1}
@@ -279,7 +284,7 @@ class Level extends Component {
               </div>
             </div>
             <div className="right-col-bottom">
-              <button onClick={() => this.checkAnswers()} />
+              <button onClick={() => this.checkAnswers()}>Make!</button>
             </div>
             </div>
         </div>

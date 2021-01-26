@@ -2,7 +2,7 @@
 const db = {
   currentLevel: {
     // [0-6]
-    number: 5,
+    number: 1,
     q1Answer: null,
     q2Answer: null,
     q3Answer: null,
