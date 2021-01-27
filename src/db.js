@@ -34,7 +34,9 @@ const db = {
   topScore: {
     date: null,
     duration: null,
+    stars: null,
   },
+  musicHasStarted: false,
 };
 
 export default db;

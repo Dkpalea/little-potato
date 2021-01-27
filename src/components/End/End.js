@@ -26,6 +26,7 @@ import egg from '../../assets/ingredient/egg.png';
 import mayo from '../../assets/ingredient/mayo.png';
 import level5 from '../../assets/level/level_5.png';
 import potatoSalad from '../../assets/dish/potato_salad.png';
+import click from '../../assets/music/click.wav';
 
 class End extends Component {
 
@@ -92,11 +93,11 @@ class End extends Component {
     for (let i=1; i<=5; i++) {
       if (i<=score) {
         starsElements.push(
-          <img key={`star-${i}`} className={mode==='big'?'star-big':'star-small'} src={star} />
+          <img key={`star-${mode}-${i}`} className={`star-${mode}`} src={star} />
         );
       } else {
         starsElements.push(
-          <img key={`star-${i}`} className={mode==='big'?'star-big':'star-small'} src={starGray} />
+          <img key={`star-${mode}-${i}`} className={`star-${mode}`} src={starGray} />
         );
       }
     }
@@ -181,7 +182,7 @@ class End extends Component {
     for (let i=1; i<=5; i++) {
       totalScore += this.calculateScore(i);
     }
-    return totalScore / 5;
+    return Math.round(totalScore / 5);
   };
 
   renderAllScores = () => {
@@ -204,6 +205,20 @@ class End extends Component {
     return allScoresElements;
   };
 
+  renderBestTime = () => {
+    if (this.props.topScore.duration) {
+      const elapsedMs = this.props.topScore.duration;
+      const minutes = Math.floor(elapsedMs / 60000);
+      const seconds = Math.floor((elapsedMs - minutes*60000) / 1000);
+      const remainingMs = elapsedMs - (minutes*60 + seconds)*1000;
+      const formattedTimesArray = [minutes, seconds, remainingMs].map(
+        (number) => number.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})
+      );
+      return (`${formattedTimesArray[0]}:${formattedTimesArray[1]}:${formattedTimesArray[2]}`);
+    }
+    return '00:00:00';
+  };
+
   render() {
     return (
       <div className="end">
@@ -212,18 +227,29 @@ class End extends Component {
           <div className="overall-top-container">
             <div className="overall-score-content">
               <div className="overall-left-col">
-                <div className="overall-your-score">Your score:</div>
+                <div className="overall-your-score">{this.props.topScore.duration===this.props.trial[5].end-this.props.trial[1].start?'New best!':'Your score'}</div>
                 <div className="overall-time">{this.renderOverallTime()}</div>
                 <div className="overall-stars-container">{this.renderStars(this.calculateAverageScore(), 'big')}</div>
                 <div className="overall-emoji-rating">{this.renderEmojis(this.calculateAverageScore())}</div>
               </div>
             </div>
-            <div className="overall-best-score">
-              <div>best score</div>
+            <div className="overall-best-score-content">
+              <div className="overall-best-left-col">
+                <div className="overall-best-your-score">Best score</div>
+                <div className="overall-best-time">{this.renderBestTime()}</div>
+                <div className="overall-best-stars-container">{this.renderStars(this.props.topScore.stars, 'tiny')}</div>
+                <div className="overall-best-emoji-rating">{this.renderEmojis(this.props.topScore.stars)}</div>
+              </div>
             </div>
           </div>
           {/*<img src={this.recipes[i].dish} />*/}
-          <button onClick={() => this.props.backToTitle()}>Go back home...</button>
+          <button onClick={() => {
+            // click  sound
+            const audio2 = new Audio(click);
+            audio2.volume = 0.1;
+            audio2.play();
+            this.props.backToTitle();
+          }}>Go back home...</button>
         </div>
       </div>
     );

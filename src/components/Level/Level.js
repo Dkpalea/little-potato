@@ -1,17 +1,17 @@
 import { Component } from 'react';
 import Modal from 'react-modal';
-import db from '../../db';
+// import db from '../../db';
 
 import bacon from '../../assets/ingredient/bacon.png';
 import butter from '../../assets/ingredient/butter.png';
-import cheese from '../../assets/ingredient/cheese.png';
+// import cheese from '../../assets/ingredient/cheese.png';
 import chives from '../../assets/ingredient/chives.png';
 import egg from '../../assets/ingredient/egg.png';
 import mayo from '../../assets/ingredient/mayo.png';
 import milk from '../../assets/ingredient/milk.png';
 import oil from '../../assets/ingredient/oil.png';
 import pepper from '../../assets/ingredient/pepper.png';
-import pepper_salad from '../../assets/ingredient/pepper_salad.png';
+// import pepper_salad from '../../assets/ingredient/pepper_salad.png';
 import potato1 from '../../assets/ingredient/potato1.png';
 import potato2 from '../../assets/ingredient/potato2.png';
 import potato3 from '../../assets/ingredient/potato3.png';
@@ -19,7 +19,7 @@ import potato4 from '../../assets/ingredient/potato4.png';
 import potato5 from '../../assets/ingredient/potato5.png';
 import salt1 from '../../assets/ingredient/salt1.png';
 import salt2 from '../../assets/ingredient/salt2.png';
-import vegetables from '../../assets/ingredient/vegetables.png';
+// import vegetables from '../../assets/ingredient/vegetables.png';
 
 import level1 from '../../assets/level/level_1.png'
 import level2 from '../../assets/level/level_2.png'
@@ -36,12 +36,12 @@ import potatoSalad from '../../assets/dish/potato_salad.png';
 import star from '../../assets/ui/star.png';
 import starGray from '../../assets/ui/star-gray.png';
 
-
 import Recipe from '../Recipe/Recipe';
+import click from '../../assets/music/click.wav';
 
 class Level extends Component {
 
-  godMode = true;
+  godMode = false;
 
   constructor(props) {
     super(props);
@@ -277,7 +277,11 @@ class Level extends Component {
       const elapsedMs = this.props.trial[5].end-this.props.trial[1].start;
       // check and set top score
       if (!this.props.topScore.duration || this.props.topScore.duration > elapsedMs) {
-        this.props.setTopScore(elapsedMs);
+        let totalScore = 0;
+        for (let i=1;i<=5;i++) {
+          totalScore += this.calculateScore(i);
+        }
+        this.props.setTopScore(elapsedMs, totalScore / 5);
       }
     }
     this.setState({modalIsOpen: false})
@@ -340,10 +344,9 @@ class Level extends Component {
     }
   };
 
-  calculateScore = () => {
-    const elapsedMs = this.props.trial[this.props.levelNumber].end-this.props.trial[this.props.levelNumber].start;
+  calculateScore = (level) => {
+    const elapsedMs = this.props.trial[level].end-this.props.trial[level].start;
     const secs = elapsedMs / 1000;
-    const level = this.props.levelNumber;
 
     if (level < 3) {
       // easy
@@ -384,12 +387,18 @@ class Level extends Component {
           <div className="modal-content">
             <div className="left-col">
               <div className="time">{this.renderTime()}</div>
-              <div className="stars-container">{this.renderStars(this.calculateScore())}</div>
-              <div className="emoji-rating">{this.renderEmojis(this.calculateScore())}</div>
+              <div className="stars-container">{this.renderStars(this.calculateScore(this.props.levelNumber))}</div>
+              <div className="emoji-rating">{this.renderEmojis(this.calculateScore(this.props.levelNumber))}</div>
             </div>
             <div className="right-col">
               <img src={this.recipes[this.props.levelNumber].dish} />
-              <button onClick={() => this.closeModalAndNavigateAndStartTimer()}>{this.props.levelNumber<5?`Continue to level ${this.props.levelNumber + 1}! 👉`:'See your final score! 😮'}</button>
+              <button onClick={() => {
+                this.closeModalAndNavigateAndStartTimer();
+                // click  sound
+                const audio2 = new Audio(click);
+                audio2.volume = 0.1;
+                audio2.play();
+              }}>{this.props.levelNumber<5?`Continue to level ${this.props.levelNumber + 1}! 👉`:'See your final score! 😮'}</button>
             </div>
           </div>
         </Modal>
@@ -429,7 +438,13 @@ class Level extends Component {
               </div>
             </div>
             <div className="right-col-bottom">
-              <button onClick={() => this.checkAnswers()}>Make!</button>
+              <button onClick={() => {
+                this.checkAnswers();
+                // click  sound
+                const audio2 = new Audio(click);
+                audio2.volume = 0.1;
+                audio2.play();
+              }}>Make!</button>
             </div>
             </div>
         </div>

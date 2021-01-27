@@ -1,4 +1,4 @@
-import logo from './logo.svg';
+// import logo from './logo.svg';
 import { Component } from 'react';
 import './App.scss';
 import Modal from 'react-modal';
@@ -7,8 +7,8 @@ import Level from './components/Level/Level';
 import Title from './components/Title/Title';
 import End from './components/End/End';
 
-import bgm from '../src/assets/music/bgm.mp3';
-import silence from '../src/assets/music/250-milliseconds-of-silence.mp3';
+// import bgm from '../src/assets/music/bgm.mp3';
+// import silence from '../src/assets/music/250-milliseconds-of-silence.mp3';
 
 import db from './db';
 
@@ -74,14 +74,28 @@ class App extends Component {
     });
   };
 
-  setTopScore = (duration) => {
+  setTopScore = (duration, avgScore) => {
     this.setState((state, props) => {
       return (
         {
           topScore: {
             date: new Date(),
             duration,
+            stars: Math.round(avgScore),
           }
+        }
+      );
+    }, () => {
+      localStorage.setItem('littlePotato', JSON.stringify(this.state));
+      console.log(this.state);
+    });
+  };
+
+  setMusicHasStarted = () => {
+    this.setState((state, props) => {
+      return (
+        {
+          musicHasStarted: true,
         }
       );
     }, () => {
@@ -92,7 +106,7 @@ class App extends Component {
 
   componentDidMount() {
     // const audio = new Audio(bgm);
-    // // audio.loop = true;
+    // audio.loop = true;
     // // media.muted = true;
     // audio.play();
   }
@@ -101,10 +115,10 @@ class App extends Component {
     return (
       <div className="App">
         {/*<iframe src={bgm} allow="autoplay" style={{display: 'none'}} id="iframeAudio" />*/}
-        <iframe src={silence} allow="autoplay" id="audio" style={{display: 'none'}} />
-        <audio id="player" autoPlay loop>
-          <source src={bgm} type="audio/mp3" />
-        </audio>
+        {/*<iframe src={silence} allow="autoplay" id="audio" style={{display: 'none'}} />*/}
+        {/*<audio id="player" autoPlay loop>*/}
+        {/*  <source src={bgm} type="audio/mp3" />*/}
+        {/*</audio>*/}
         {/*<audio src={bgm} autoPlay style={{display: 'none'}} id="iframeAudio" />*/}
         {/*<header className="App-header">*/}
         {/*  <img src={logo} className="App-logo" alt="logo" />*/}
@@ -122,6 +136,8 @@ class App extends Component {
         {/*</header>*/}
         {this.state.currentLevel.number === 0 ?
           <Title
+            setMusicHasStarted={() => this.setMusicHasStarted()}
+            musicHasStarted={this.state.musicHasStarted}
             levelNumber={this.state.currentLevel.number}
             increaseLevelNumber={() => this.increaseLevelNumber()}
             updateTimeForLevel={(updateMode, level) => this.updateTimeForLevel(updateMode, level)}
@@ -136,7 +152,7 @@ class App extends Component {
               q3Answer={this.state.currentLevel.q3Answer}
               increaseLevelNumber={() => this.increaseLevelNumber()}
               updateTimeForLevel={(updateMode, level) => this.updateTimeForLevel(updateMode, level)}
-              setTopScore={(duration) => this.setTopScore(duration)}
+              setTopScore={(duration, avgScore) => this.setTopScore(duration, avgScore)}
             /> :
             <End
               trial={this.state.trial}

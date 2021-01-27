@@ -1,5 +1,6 @@
 $starSize: 50;
 $starSizeSmall: 30;
+$starSizeTiny: 18;
 
 .end {
   height: 100%;
@@ -89,6 +90,14 @@ $starSizeSmall: 30;
           justify-content: center;
           align-items: center;
 
+          .overall-your-score {
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 35px;
+            line-height: 48px;
+          }
+
           .overall-time {
             font-family: Nunito;
             font-style: normal;
@@ -136,9 +145,75 @@ $starSizeSmall: 30;
         }
       }
 
-      .overall-best-score {
-        margin-left: 20px;
+      .overall-best-score-content {
+        display: flex;
+        flex-direction: row;
+
+        .overall-best-left-col {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          margin-left: 20px;
+
+          .overall-best-your-score {
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+          }
+
+          .overall-best-time {
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 20px;
+            line-height: 27px;
+          }
+
+          .overall-best-stars-container {
+            display: flex;
+            flex-direction: row;
+            width: $starSizeTiny * 5 + px;
+
+            .star-tiny {
+              width: $starSizeTiny + px;
+              height: $starSizeTiny + px;
+            }
+          }
+
+          .overall-best-emoji-rating {
+            margin-top: 5px;
+
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 12px;
+            line-height: 16px;
+          }
+        }
+
+        .right-col {
+          display: flex;
+          flex-direction: column;
+          margin: auto auto auto 50px;
+
+          // dish image
+          img {
+            width: 100px;
+            height: 100px;
+          }
+
+          button {
+            margin-top: 20px;
+          }
+        }
       }
+
+      //.overall-best-score {
+      //  margin-left: 20px;
+      //}
     }
 
     img {

@@ -1,6 +1,6 @@
 import { Component } from 'react';
 
-import recipe from '../../assets/level/recipe.png';
+// import recipe from '../../assets/level/recipe.png';
 
 class Recipe extends Component {
   render() {
