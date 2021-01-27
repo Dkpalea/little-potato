@@ -1,5 +1,7 @@
 import { Component } from 'react';
+import Modal from 'react-modal';
 import db from '../../db';
+
 import bacon from '../../assets/ingredient/bacon.png';
 import butter from '../../assets/ingredient/butter.png';
 import cheese from '../../assets/ingredient/cheese.png';
@@ -25,6 +27,15 @@ import level3 from '../../assets/level/level_3.png'
 import level4 from '../../assets/level/level_4.png'
 import level5 from '../../assets/level/level_5.png'
 
+import bakedPotato from '../../assets/dish/baked_potato.png';
+import fries from '../../assets/dish/fries.png';
+import mashedPotato from '../../assets/dish/mashed_potato.png';
+import potatoChips from '../../assets/dish/potato_chips.png';
+import potatoSalad from '../../assets/dish/potato_salad.png';
+
+import star from '../../assets/ui/star.png';
+import starGray from '../../assets/ui/star-gray.png';
+
 
 import Recipe from '../Recipe/Recipe';
 
@@ -42,6 +53,7 @@ class Level extends Component {
       userAnswer1IsCorrect: null,
       userAnswer2IsCorrect: null,
       userAnswer3IsCorrect: null,
+      modalIsOpen: false,
     };
   }
 
@@ -187,6 +199,7 @@ class Level extends Component {
       ingredientImgPath2: salt1,
       ingredientImgPath3: oil,
       backgroundImgPath: level1,
+      dish: fries,
     },
     2: {
       recipeName: 'Potato Chips',
@@ -197,6 +210,7 @@ class Level extends Component {
       ingredientImgPath2: salt2,
       ingredientImgPath3: pepper,
       backgroundImgPath: level2,
+      dish: potatoChips,
     },
     3: {
       recipeName: 'Mashed Potatoes',
@@ -207,6 +221,7 @@ class Level extends Component {
       ingredientImgPath2: milk,
       ingredientImgPath3: butter,
       backgroundImgPath: level3,
+      dish: mashedPotato,
     },
     4: {
       recipeName: 'Baked Potatoes',
@@ -217,6 +232,7 @@ class Level extends Component {
       ingredientImgPath2: bacon,
       ingredientImgPath3: chives,
       backgroundImgPath: level4,
+      dish: bakedPotato,
     },
     5: {
       recipeName: 'Baked Potatoes',
@@ -227,6 +243,7 @@ class Level extends Component {
       ingredientImgPath2: egg,
       ingredientImgPath3: mayo,
       backgroundImgPath: level5,
+      dish: potatoSalad,
     },
   };
 
@@ -238,16 +255,144 @@ class Level extends Component {
 
     if ((userAnswer1IsCorrect && userAnswer2IsCorrect && userAnswer3IsCorrect) || this.godMode) {
       // clear input after correct answers submitted
-      this.props.increaseLevelNumber();
+      this.props.updateTimeForLevel('end', this.props.levelNumber);
+      this.openModal();
       document.getElementById('user-answer-1-input').value = '';
       document.getElementById('user-answer-2-input').value = '';
       document.getElementById('user-answer-3-input').value = '';
+      // reset correctness state to hide incorrect border formatting
+      this.setState({userAnswer1IsCorrect: null, userAnswer2IsCorrect: null, userAnswer3IsCorrect: null});
+    }
+  };
+
+  openModal = () => {
+    this.setState({modalIsOpen: true})
+  };
+
+  closeModalAndNavigateAndStartTimer = () => {
+    this.props.increaseLevelNumber();
+    if (this.props.levelNumber !== 5) {
+      this.props.updateTimeForLevel('start', this.props.levelNumber+1);
+    } else {
+      const elapsedMs = this.props.trial[5].end-this.props.trial[1].start;
+      // check and set top score
+      if (!this.props.topScore.duration || this.props.topScore.duration > elapsedMs) {
+        this.props.setTopScore(elapsedMs);
+      }
+    }
+    this.setState({modalIsOpen: false})
+  };
+
+  modalStyles = {
+    content: {
+      width: '940px',
+      height: '540px',
+      top: '50%',
+      left: '50%',
+      right: 'auto',
+      bottom: 'auto',
+      marginRight: '-50%',
+      transform: 'translate(-50%, -50%)'
+    },
+  };
+
+  renderStars = (score) => {
+    const starsElements = [];
+    for (let i=1; i<=5; i++) {
+      if (i<=score) {
+        starsElements.push(
+          <img key={`star-${i}`} className="star" src={star} />
+        );
+      } else {
+        starsElements.push(
+          <img key={`star-${i}`} className="star" src={starGray} />
+        );
+      }
+    }
+    return starsElements;
+  };
+
+  renderEmojis = (score) => {
+    switch (score){
+      case 1:
+        return ('😧 💩');
+      case 2:
+        return ('✌️ ☹️');
+      case 3:
+        return ('😁 👍');
+      case 4:
+        return ('👌 😎');
+      case 5:
+        return ('🤓 🥔');
+    }
+  };
+
+  renderTime = () => {
+    if (this.props.trial[this.props.levelNumber].end) {
+      const elapsedMs = this.props.trial[this.props.levelNumber].end-this.props.trial[this.props.levelNumber].start;
+      const minutes = Math.floor(elapsedMs / 60000);
+      const seconds = Math.floor((elapsedMs - minutes*60000) / 1000);
+      const remainingMs = elapsedMs - (minutes*60 + seconds)*1000;
+      const formattedTimesArray = [minutes, seconds, remainingMs].map(
+        (number) => number.toLocaleString('en-US', {minimumIntegerDigits: 2, useGrouping: false})
+      );
+      return (`${formattedTimesArray[0]}:${formattedTimesArray[1]}:${formattedTimesArray[2]}`);
+    }
+  };
+
+  calculateScore = () => {
+    const elapsedMs = this.props.trial[this.props.levelNumber].end-this.props.trial[this.props.levelNumber].start;
+    const secs = elapsedMs / 1000;
+    const level = this.props.levelNumber;
+
+    if (level < 3) {
+      // easy
+      if (secs < 15) return 5;
+      if (secs < 20) return 4;
+      if (secs < 30) return 3;
+      if (secs < 45) return 2;
+      if (secs >= 45) return 1;
+    } else if (level >=3 && level < 5) {
+      // medium
+      if (secs < 25) return 5;
+      if (secs < 30) return 4;
+      if (secs < 50) return 3;
+      if (secs < 80) return 2;
+      if (secs >= 80) return 1;
+    } else {
+      // hard
+      if (secs < 45) return 5;
+      if (secs < 55) return 4;
+      if (secs < 70) return 3;
+      if (secs < 100) return 2;
+      if (secs >= 100) return 1;
     }
   };
 
   render() {
     return (
       <div className="level">
+        <Modal
+          isOpen={this.state.modalIsOpen}
+          // onAfterOpen={afterOpenModal}
+          onRequestClose={() => this.closeModalAndNavigateAndStartTimer()}
+          // style={this.modalStyles}
+          contentLabel="Your Score"
+          className="modal"
+          overlayClassName="overlay"
+        >
+          <div className="modal-content">
+            <div className="left-col">
+              <div className="time">{this.renderTime()}</div>
+              <div className="stars-container">{this.renderStars(this.calculateScore())}</div>
+              <div className="emoji-rating">{this.renderEmojis(this.calculateScore())}</div>
+            </div>
+            <div className="right-col">
+              <img src={this.recipes[this.props.levelNumber].dish} />
+              <button onClick={() => this.closeModalAndNavigateAndStartTimer()}>{this.props.levelNumber<5?`Continue to level ${this.props.levelNumber + 1}! 👉`:'See your final score! 😮'}</button>
+            </div>
+          </div>
+        </Modal>
         {/*<div className="level-background" style={{backgroundImage: `url(${this.recipes[this.props.levelNumber].backgroundImgPath})`}} />*/}
         <div className="level-inner">
           <div className="left-col">

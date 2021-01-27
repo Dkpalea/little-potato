@@ -1,11 +1,15 @@
 import { Component } from 'react';
 
+import bg2 from '../../assets/title_ending/bg2.png';
+
 class Title extends Component {
   render() {
     return (
       <div className="title">
-        <h1>title</h1>
-        <button onClick={() => this.props.increaseLevelNumber()}>next</button>
+        <button onClick={() => {
+          this.props.increaseLevelNumber();
+          this.props.updateTimeForLevel('start', this.props.levelNumber+1);
+        }}><b>Begin!</b></button>
       </div>
     );
   }

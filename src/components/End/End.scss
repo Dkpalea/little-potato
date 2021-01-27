@@ -1,0 +1,153 @@
+$starSize: 50;
+$starSizeSmall: 30;
+
+.end {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+
+  .all-scores-container {
+    .score-content {
+      display: flex;
+      flex-direction: row;
+      margin-bottom: 10px;
+
+      .left-col {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        margin: 0 0 15px 0;
+
+        .time {
+          font-family: Nunito;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 30px;
+          line-height: 41px;
+        }
+
+        .stars-container {
+          display: flex;
+          flex-direction: row;
+          width: $starSizeSmall * 5 + px;
+
+          .star-small {
+            width: $starSizeSmall + px;
+            height: $starSizeSmall + px;
+          }
+        }
+
+        .emoji-rating {
+          margin-top: 8px;
+
+          font-family: Nunito;
+          font-style: normal;
+          font-weight: normal;
+          font-size: 22px;
+          line-height: 30px;
+        }
+      }
+
+      .right-col {
+        display: flex;
+        flex-direction: column;
+        margin: auto auto auto 50px;
+
+        // dish image
+        img {
+          width: 100px;
+          height: 100px;
+        }
+
+        button {
+          margin-top: 20px;
+        }
+      }
+    }
+  }
+
+  .overall-outer-right-col {
+    display: flex;
+    flex-direction: column;
+    margin-left: 50px;
+
+    .overall-top-container {
+      display: flex;
+      align-items: flex-end;
+      margin-bottom: 20px;
+
+      .overall-score-content {
+        display: flex;
+        flex-direction: row;
+
+        .overall-left-col {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+
+          .overall-time {
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 60px;
+            line-height: 82px;
+          }
+
+          .overall-stars-container {
+            display: flex;
+            flex-direction: row;
+            width: $starSize * 5 + px;
+
+            .star-big {
+              width: $starSize + px;
+              height: $starSize + px;
+            }
+          }
+
+          .overall-emoji-rating {
+            margin-top: 15px;
+
+            font-family: Nunito;
+            font-style: normal;
+            font-weight: normal;
+            font-size: 30px;
+            line-height: 41px;
+          }
+        }
+
+        .right-col {
+          display: flex;
+          flex-direction: column;
+          margin: auto auto auto 50px;
+
+          // dish image
+          img {
+            width: 100px;
+            height: 100px;
+          }
+
+          button {
+            margin-top: 20px;
+          }
+        }
+      }
+
+      .overall-best-score {
+        margin-left: 20px;
+      }
+    }
+
+    img {
+
+    }
+
+    button {
+
+    }
+
+  }
+}
