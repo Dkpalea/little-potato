@@ -41,7 +41,7 @@ import click from '../../assets/music/click.wav';
 
 class Level extends Component {
 
-  godMode = false;
+  godMode = true;
 
   constructor(props) {
     super(props);
@@ -137,8 +137,8 @@ class Level extends Component {
       case 5:
         // a - randNum1 + randNum2
         // make sure not negative
-        randNumA = this.getRandomInt(randNum1 + randNum2,randNum1+randNum2+10)
-        q1Answer = randNumA - (randNum1 + randNum2);
+        randNumA = this.getRandomInt(randNum1 + randNum2, randNum1+randNum2+10)
+        q1Answer = randNumA - randNum1 + randNum2;
 
         // b - randNum3 ÷ randomNum4
         // make sure no undefined and in Z+
@@ -372,9 +372,24 @@ class Level extends Component {
     }
   };
 
+  backgroundColor = () => {
+    switch (this.props.levelNumber) {
+      case 1:
+        return ({backgroundColor: '#43a95d'})
+      case 2:
+        return ({backgroundColor: '#ebabc7'})
+      case 3:
+        return ({backgroundColor: '#f19149'})
+      case 4:
+        return ({backgroundColor: '#cce198'})
+      case 5:
+        return ({backgroundColor: '#d1c0a5'})
+    }
+  };
+
   render() {
     return (
-      <div className="level">
+      <div className="level" style={this.backgroundColor()}>
         <Modal
           isOpen={this.state.modalIsOpen}
           // onAfterOpen={afterOpenModal}
