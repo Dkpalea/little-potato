@@ -41,7 +41,7 @@ import click from '../../assets/music/click.wav';
 
 class Level extends Component {
 
-  godMode = true;
+  godMode = false;
 
   constructor(props) {
     super(props);
